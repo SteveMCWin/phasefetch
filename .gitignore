@@ -5,5 +5,3 @@ src/
 pkg/
 
 *.log
-
-.SRCINFO
