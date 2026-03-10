@@ -1,1 +1,7 @@
-research
+*.tar.gz
+*.tar.zst
+*.tar.xz
+src/
+pkg/
+
+*.log
