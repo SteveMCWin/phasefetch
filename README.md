@@ -1,6 +1,6 @@
 # 🌙 PhaseFetch
 
-PhaseFetch is a lightweight, extensible bash script that calculates the current moon phase and writes the corresponding art to a file. It's designed to integrate seamlessly with system fetch tools like [FastFetch](https://github.com/fastfetch-cli/fastfetch), updating your terminal with a live moon phase display that refreshes automatically in the background.
+PhaseFetch is a lightweight, extensible bash script that calculates the current moon phase and writes the corresponding art to a file. It's designed to integrate with system fetch tools like [FastFetch](https://github.com/fastfetch-cli/fastfetch), updating your terminal with a live moon phase display that refreshes automatically in the background.
 
 ![moon phases: new, crescent, quarter, gibbous, full](https://img.shields.io/badge/phases-8-silver) ![bash](https://img.shields.io/badge/shell-bash-89e051)
 
