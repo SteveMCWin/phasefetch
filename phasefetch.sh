@@ -1,18 +1,22 @@
+#!/bin/bash
+
+set -e
+
 # Ascii art color
 color="#FFFFC5"
 # How often to run the calculation for current moon phase
-update_frequency_hours=6
+update_frequency_hours=8
 # What art file to use for output
 mode="ascii"
 # Where to output the art file
-output_dir="$XDG_RUNTIME_DIR"/PhaseFetch
+output_dir="$XDG_RUNTIME_DIR"/phasefetch
 # Where to get the art files from
 system_data_dir="$(dirname "$(realpath "$0")")"
-user_data_dir="${XDG_DATA_HOME:-$HOME/.local/share}/PhaseFetch"
+user_data_dir="${XDG_DATA_HOME:-$HOME/.local/share}/phasefetch"
 
 # If not locally testing, use the usr dir
-if [ -d "/usr/share/PhaseFetch" ]; then
-    data_dir="/usr/share/PhaseFetch"
+if [ -d "/usr/share/phasefetch" ]; then
+    data_dir="/usr/share/phasefetch"
 fi
 
 # Check for parameters
@@ -52,8 +56,8 @@ while [ $# -gt 0 ]; do
             echo ""
             echo "Options:"
             echo "  -c, --color <hex>               Hex color for moon display (default: #FFFFC5)"
-            echo "  -u, --update-frequency <hours>  How often to refresh the moon phase, in hours (default: 6)"
-            echo "  -o, --output-dir                The directory in which the current moon phase art file will be stored (default: $XDG_RUNTIME_DIR/PhaseFetch)"
+            echo "  -u, --update-frequency <hours>  How often to refresh the moon phase, in hours (default: 8)"
+            echo "  -o, --output-dir                The directory in which the current moon phase art file will be stored (default: $XDG_RUNTIME_DIR/phasefetch)"
             echo "  -m, --mode <mode>               Display mode. Valid values: 'ascii', 'png' (default: ascii)"
             echo "  -h, --help                      Show this help message"
             exit 0
