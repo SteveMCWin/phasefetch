@@ -16,7 +16,7 @@ user_data_dir="${XDG_DATA_HOME:-$HOME/.local/share}/phasefetch"
 
 # If not locally testing, use the usr dir
 if [ -d "/usr/share/phasefetch" ]; then
-    data_dir="/usr/share/phasefetch"
+    system_data_dir="/usr/share/phasefetch"
 fi
 
 # Check for parameters
