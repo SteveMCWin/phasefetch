@@ -1,6 +1,6 @@
 # Maintainer: Stevan <stevp003@gmail.com>
 pkgname=phasefetch
-pkgver=0.9.2
+pkgver=0.9.3
 pkgrel=1
 pkgdesc="Calculates the current moon phase and writes corresponding art to a file, designed for use with FastFetch"
 arch=("any")
@@ -9,7 +9,7 @@ license=("MIT")
 depends=("bash" "awk" "file" "coreutils")
 optdepends=("fastfetch: display moon phase in terminal fetch")
 source=("$pkgname-$pkgver.tar.gz::https://github.com/SteveMCWin/$pkgname/archive/refs/tags/v$pkgver.tar.gz")
-sha256sums=('9a02f8a310ff3d284cefbdf086fcfed1a2fd3697c38b9d31daaf0edbfeda3d01')
+sha256sums=('9416426fbc5cfdb8a13573119c2e9c050d67f3b2e2c3cffa2023ba991fbe3503')
 
 package() {
     cd "$srcdir/$pkgname-$pkgver"
