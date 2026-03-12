@@ -9,13 +9,13 @@ PhaseFetch is a lightweight, extensible bash script that calculates the current 
 ## Screenshots
 
 <div align="center">
-  <img src="screenshots/example_waxing_crescent.png?raw=true" /><br/>
-  <em>Waxing crescent</em>
+  <img src="screenshots/example_waxing_gibbous.png?raw=true" /><br/>
+  <em>Waxing Gibbous</em>
 </div>
 
 <div align="center">
-  <img src="screenshots/example_waxing_gibbous.png?raw=true" /><br/>
-  <em>Tuning G string demo</em>
+  <img src="screenshots/example_waxing_crescent.png?raw=true" /><br/>
+  <em>Waxing crescent</em>
 </div>
 
 ---
