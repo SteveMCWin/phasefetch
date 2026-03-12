@@ -1,8 +1,22 @@
 # 🌙 PhaseFetch
 
-PhaseFetch is a lightweight, extensible bash script that calculates the current moon phase and writes the corresponding art to a file. It's designed to integrate with system fetch tools like [FastFetch](https://github.com/fastfetch-cli/fastfetch), updating your terminal with a live moon phase display that refreshes automatically in the background.
+PhaseFetch is a lightweight, extensible bash script that calculates the current moon phase and writes the corresponding art to a file. It's designed to integrate seamlessly with system fetch tools like [FastFetch](https://github.com/fastfetch-cli/fastfetch), updating your terminal with a live moon phase display that refreshes automatically in the background.
 
 ![moon phases: new, crescent, quarter, gibbous, full](https://img.shields.io/badge/phases-8-silver) ![bash](https://img.shields.io/badge/shell-bash-89e051)
+
+---
+
+## Screenshots
+
+<div align="center">
+  <img src="screenshots/example_waxing_crescent.png?raw=true" /><br/>
+  <em>Waxing crescent</em>
+</div>
+
+<div align="center">
+  <img src="screenshots/example_waxing_gibbous.png?raw=true" /><br/>
+  <em>Tuning G string demo</em>
+</div>
 
 ---
 
@@ -16,17 +30,6 @@ PhaseFetch is a lightweight, extensible bash script that calculates the current 
 
 ---
 
-## Quickstart
-
-The steps to get this working with FastFetch:
-
-- [Install dependencies](#dependencies)
-- [Install phasefetch](#installation)
-- [Autostart](#autostart)
-- [Integrate into FastFetch config](#integrating-with-fastfetch)
-
----
-
 ## Dependencies
 
 | Dependency | Purpose |
@@ -35,9 +38,9 @@ The steps to get this working with FastFetch:
 | `awk` | Moon phase calculation |
 | `file` | Detecting PNG vs ASCII art files |
 | `coreutils` | `date`, `sleep`, `ln`, `cp`, `mkdir` |
-| `fastfetch` | Displaying the output |
+| `fastfetch` | *(optional)* Displaying the output |
 
-All of these are standard on any Linux system except FastFetch, which is optional if you wish to use this for something other than having a moon in your terminal.
+All of these are standard on any Linux system except FastFetch, which is optional.
 
 ---
 
@@ -54,7 +57,7 @@ paru -S phasefetch
 ### Build from Source
 
 ```bash
-git clone https://github.com/SteveMCWin/PhaseFetch.git
+git clone https://github.com/yourusername/phasefetch.git
 cd phasefetch
 chmod +x install.sh
 ./install.sh
@@ -70,17 +73,19 @@ The install script copies the mode data to `/usr/share/phasefetch/` and the scri
 phasefetch [OPTIONS]
 
 Options:
-  -c, --color <hex>               Hex color for moon display (default: #FFFFC5)
-  -u, --update-frequency <hours>  How often to refresh the moon phase, in hours (default: 6)
+  -c, --color <hex>               Hex color for moon display (default: #FFFACD) Note: when you prepend the color with '#' you have to put the whole thing in quotes
+  -u, --update-frequency <hours>  How often to refresh the moon phase, in hours (default: 8)
   -o, --output-dir <path>         Directory to store the current moon phase art (default: $XDG_RUNTIME_DIR/phasefetch)
   -m, --mode <mode>               Display mode — any folder name in your data dir (default: ascii)
+  -f, --file <phase>              Override the phase calculation and display a specific phase. Valid values: new_moon, waxing_crescent, first_quarter, waxing_gibbous, full_moon, waning_gibbous, last_quarter, waning_crescent
+      --once                      Write the output file once and exit instead of looping
   -h, --help                      Show this help message
 ```
 
 ### Examples
 
 ```bash
-# Run with defaults (ascii, updates every 6 hours)
+# Run with defaults (ascii, updates every 8 hours)
 phasefetch
 
 # Use PNG mode with a cooler white color, refresh every 12 hours
@@ -88,8 +93,13 @@ phasefetch --mode png --color "#E8E8FF" --update-frequency 12
 
 # Use a custom mode you created
 phasefetch --mode neon_ascii
+
+# Force a specific phase to display regardless of the actual moon
+phasefetch --file full_moon
+
+# Write the output once and exit (useful for testing or manual runs)
+phasefetch --once --color FFFACD
 ```
-> **Note:** phasefetch runs in a loop, running it straight in the terminal will make it look like nothing is happening
 
 ---
 
@@ -197,8 +207,7 @@ Each file can be either:
 
 Once the folder exists, use it immediately with `--mode your_mode_name`. If PhaseFetch is already running, it will pick up the new mode on its next update cycle without needing a restart.
 
-> If you want to **override** a built-in mode (e.g. `ascii`), do so by creating a folder with the same name in your user directory. Your version will always win.
-> **Note:** You shouldn't simply change the files in the `/usr/share/phasefetch/` directory, your changes may be overwritten by future updates.
+> You can also **override** a built-in mode (e.g. `ascii`) by creating a folder with the same name in your user directory. Your version will always win.
 
 ---
 

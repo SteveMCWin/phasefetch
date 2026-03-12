@@ -2,14 +2,27 @@
 
 set -e
 
+###########################
+####### GLOBAL VARS #######
+###########################
+
 # Ascii art color
-color="#FFFFC5"
+color="#FFFACD"
 # How often to run the calculation for current moon phase
 update_frequency_hours=8
+# Run once to just update the current_phase with desired art
+once=false
+# Which art to display when running. Ignores calculation
+phase_file=""
 # What art file to use for output
 mode="ascii"
 # Where to output the art file
 output_dir="$XDG_RUNTIME_DIR"/phasefetch
+# File names containing appropriate art to be displayed
+phase_file_names=("new_moon" "waxing_crescent" "first_quarter" "waxing_gibbous" "full_moon" "waning_gibbous" "last_quarter" "waning_crescent")
+# The directory from which the art will be pulled from
+data_dir=""
+
 # Where to get the art files from
 system_data_dir="$(dirname "$(realpath "$0")")"
 user_data_dir="${XDG_DATA_HOME:-$HOME/.local/share}/phasefetch"
@@ -18,6 +31,10 @@ user_data_dir="${XDG_DATA_HOME:-$HOME/.local/share}/phasefetch"
 if [ -d "/usr/share/phasefetch" ]; then
     system_data_dir="/usr/share/phasefetch"
 fi
+
+#############################
+####### HANDLE PARAMS #######
+#############################
 
 # Check for parameters
 while [ $# -gt 0 ]; do
@@ -50,15 +67,26 @@ while [ $# -gt 0 ]; do
                 shift
             fi
         ;;
+        -f | --file)
+            if [ -n "$2" ] && [ "$2" != -* ]; then
+                phase_file=$2
+                shift
+            fi
+        ;;
+        --once)
+            once=true
+        ;;
         -h | --help)
             echo "PhaseFetch is an extendable tool that calculates which is the current moon phase and selects an art file based on current moon phase and artstyle selected"
             echo "Usage: $(basename "$0") [OPTIONS]"
             echo ""
             echo "Options:"
-            echo "  -c, --color <hex>               Hex color for moon display (default: #FFFFC5)"
+            echo "  -c, --color <hex>               Hex color for moon display (default: #FFFACD) Note: you have to put the color in quotes"
             echo "  -u, --update-frequency <hours>  How often to refresh the moon phase, in hours (default: 8)"
             echo "  -o, --output-dir                The directory in which the current moon phase art file will be stored (default: $XDG_RUNTIME_DIR/phasefetch)"
-            echo "  -m, --mode <mode>               Display mode. Valid values: 'ascii', 'png' (default: ascii)"
+            echo "  -m, --mode <mode>               Display mode. Valid values: 'ascii', 'png', 'png_256' (default: ascii)"
+            echo "  -f, --file <file>               Which art file to display for current mode. Overwrites the phase calculation. Valid options are: ${phase_file_names[*]}"
+            echo "      --once                      Run the script once to update the output art. Use this if you don't want to Ctrl+C after running the script manually"
             echo "  -h, --help                      Show this help message"
             exit 0
         ;;
@@ -66,8 +94,25 @@ while [ $# -gt 0 ]; do
     shift
 done
 
-# File names containing appropriate art to be displayed
-phase_file_names=("new_moon" "waxing_crescent" "first_quarter" "waxing_gibbous" "full_moon" "waning_gibbous" "last_quarter" "waning_crescent")
+# Check if the phase_file the user selected is valid
+if [ -n "$phase_file" ]; then
+    valid=false
+    for name in "${phase_file_names[@]}"; do
+        if [ "$phase_file" = "$name" ]; then
+            valid=true
+            break
+        fi
+    done
+    if ! $valid; then
+        echo "Error: '$phase_file' is not a valid phase file name." >&2
+        echo "Valid options: ${phase_file_names[*]}" >&2
+        exit 1
+    fi
+fi
+
+#################################
+####### UTILITY FUNCITONS #######
+#################################
 
 # Util func to make the text colored for ascii art using escape sequences
 print_colored() {
@@ -80,28 +125,8 @@ print_colored() {
   printf "\e[0m\n"
 }
 
-# Determine if the art is an image or ascii art and write/copy it's contents to an output file
-write_phase() {
-    mkdir -p "$output_dir"
-    local file="$data_dir/$mode/${phase_file_names[$moon_phase]}"
-
-    if file "$file" | grep -q "PNG"; then
-        local out="$output_dir/current_phase.png"
-        cp "$file" "$out"
-        echo "Copied to $out"
-    else
-        local out="$output_dir/current_phase.ans"
-        print_colored "$color" "$file" > "$out"
-        echo "Wrote to $out"
-    fi
-
-    # Note that the file $out actually has an extension
-    # Initially this function just overwrote the current_phase file, but once fastfetch detects the current_phase is a png, it won't render ascii art even after changing the mode to ascii
-    # The workaround is to have separate png and ascii output files, but after updating them, link the current_phase to the correct one
-    ln -sf "$out" "$output_dir/current_phase"
-}
-
-while true; do
+# Checks if the passed mode exists and has all expected files
+check_mode_validity() {
     # Check whether the mode is defined in the user dir or system dir, check user directory first
     if [ -d "$user_data_dir/$mode" ]; then
         data_dir="$user_data_dir"
@@ -128,6 +153,44 @@ while true; do
         done
         exit 1
     fi
+}
+
+# Determine if the art is an image or ascii art and write/copy it's contents to an output file
+write_phase() {
+    mkdir -p "$output_dir"
+
+    # if file not set, use the calculated one
+    # the 'name' var is used as a suffix to prevent terminal image cache from displaying old images
+    if [ -n "$phase_file" ]; then
+        local file="$data_dir/$mode/$phase_file"
+        local name="$phase_file"
+    else
+        local file="$data_dir/$mode/${phase_file_names[$moon_phase]}"
+        local name="${phase_file_names[$moon_phase]}"
+    fi
+
+    if file "$file" | grep -q "PNG"; then
+        local out="$output_dir/${mode}_${name}.png"
+        cp "$file" "$out"
+    else
+        local out="$output_dir/${mode}_${name}.ans"
+        print_colored "$color" "$file" > "$out"
+    fi
+
+    # Note that the file $out actually has an extension
+    # Initially this function just overwrote the current_phase file, but once fastfetch detects the current_phase is a png, it won't render ascii art even after changing the mode to ascii
+    # The workaround is to have separate png and ascii output files, but after updating them, link the current_phase to the correct one
+    ln -sf "$out" "$output_dir/current_phase"
+}
+
+
+##########################
+####### CORE LOGIC #######
+##########################
+
+while true; do
+    check_mode_validity
+
 
     # see how many days have passed since last new moon
     # moduo that with the length of a moon cycle
@@ -144,6 +207,11 @@ while true; do
 
     # Write art corresponding to the phase into the output file
     write_phase
+
+    # If user specified the 'once' flag, we don't loop
+    if $once; then
+        exit 0
+    fi
 
     # Sleep for the specified amount of hourse and repeat
     sleep "$update_frequency_hours"h
