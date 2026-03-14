@@ -20,7 +20,7 @@ PhaseFetch is a lightweight, extensible bash script that calculates the current 
 
 <div align="center">
   <img src="screenshots/minimal_moon_screenshot.png?raw=true" /><br/>
-  <em>Minecraft Moon - Credits to D_Dimensional</em>
+  <em>Minimal Moon</em>
 </div>
 
 ---
