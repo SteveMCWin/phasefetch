@@ -210,15 +210,14 @@ while true; do
 
     # see how many days have passed since last new moon
     # moduo that with the length of a moon cycle
-    # approximate the phase by dividing by 3.691 (not all phases last the same amount of time, but if they did, it would be 3.691, that's why I said 'approximate')
+    # divide the cycle into 8 equal sectors, offset by 0.5 so each phase is centered on its defining moment rather than starting at it
     moon_phase=$(awk "BEGIN {
-      diff = ($(date +%s) - $(date +%s -d "2000-01-06 18:14 UTC")) / 86400
+      diff = ($(date +%s) - $(date +%s -d "2026-02-17 12:01 UTC")) / 86400
       age = diff % 29.53059
       if (age < 0) age = age + 29.53059
 
-      phase = age / 3.691
-      if (phase > 7) phase = 7
-      print int(phase)
+      sector = (age * 8 / 29.53059 + 0.5) % 8
+      print int(sector)
     }")
 
     # Write art corresponding to the phase into the output file

@@ -133,6 +133,20 @@ Add the following to your FastFetch config (usually `~/.config/fastfetch/config.
 > rm -rf ~/.cache/fastfetch/
 > ```
 
+> **Tip:** You can change the size of the image and padding in the fastfetch config, which would look something like this:
+```ini
+    "logo": {
+        "source": "$XDG_RUNTIME_DIR/phasefetch/current_phase",
+        "padding": {
+            "top": 1,
+            "right": 2,
+            "left": 2
+        },
+        "width": 32
+    }
+```
+> **Note:** Remove the "width" field when using ascii based moon phase art
+
 ---
 
 ## Autostart
