@@ -61,6 +61,8 @@ paru -S phasefetch
 
 ### Build from Source
 
+> **Note:** The script hasn't been tested
+
 ```bash
 git clone https://github.com/yourusername/phasefetch.git
 cd phasefetch
