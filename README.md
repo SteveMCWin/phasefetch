@@ -9,13 +9,13 @@ PhaseFetch is a lightweight, extensible bash script that calculates the current 
 ## Screenshots
 
 <div align="center">
-  <img src="screenshots/example_waxing_gibbous.png?raw=true" /><br/>
-  <em>Waxing Gibbous</em>
+  <img src="screenshots/red_ascii_screenshot.png?raw=true" /><br/>
+  <em>Ascii Moon - Red</em>
 </div>
 
 <div align="center">
-  <img src="screenshots/example_waxing_crescent.png?raw=true" /><br/>
-  <em>Waxing crescent</em>
+  <img src="screenshots/minecraft_moon_screenshot.png?raw=true" /><br/>
+  <em>Minecraft Moon - Credits to D_Dimensional</em>
 </div>
 
 ---
@@ -73,10 +73,10 @@ The install script copies the mode data to `/usr/share/phasefetch/` and the scri
 phasefetch [OPTIONS]
 
 Options:
-  -c, --color <hex>               Hex color for moon display (default: #FFFACD) Note: when you prepend the color with '#' you have to put the whole thing in quotes
+  -c, --color <hex>               Hex color to tint the moon. For ASCII art, applies color via escape sequences. For PNG modes, tints the image with ImageMagick (requires `magick` or `convert`). No tint applied by default. Note: put the '#' hex color in quotes
   -u, --update-frequency <hours>  How often to refresh the moon phase, in hours (default: 8)
   -o, --output-dir <path>         Directory to store the current moon phase art (default: $XDG_RUNTIME_DIR/phasefetch)
-  -m, --mode <mode>               Display mode — any folder name in your data dir (default: ascii)
+  -m, --mode <mode>               Display mode — built-in: `ascii`, `realistic`, `minecraft`, `minimal`, or any custom folder name (default: ascii)
   -f, --file <phase>              Override the phase calculation and display a specific phase. Valid values: new_moon, waxing_crescent, first_quarter, waxing_gibbous, full_moon, waning_gibbous, last_quarter, waning_crescent
       --once                      Write the output file once and exit instead of looping
   -h, --help                      Show this help message
@@ -88,8 +88,8 @@ Options:
 # Run with defaults (ascii, updates every 8 hours)
 phasefetch
 
-# Use PNG mode with a cooler white color, refresh every 12 hours
-phasefetch --mode png --color "#E8E8FF" --update-frequency 12
+# Use realistic PNG mode with a blue tint, refresh every 12 hours
+phasefetch --mode realistic --color "#E8E8FF" --update-frequency 12
 
 # Use a custom mode you created
 phasefetch --mode neon_ascii
@@ -98,7 +98,7 @@ phasefetch --mode neon_ascii
 phasefetch --file full_moon
 
 # Write the output once and exit (useful for testing or manual runs)
-phasefetch --once --color FFFACD
+phasefetch --once
 ```
 
 ---
@@ -119,6 +119,11 @@ Add the following to your FastFetch config (usually `~/.config/fastfetch/config.
 ```
 
 > **Note:** PhaseFetch must be running in the background *before* FastFetch starts, so the output file exists when FastFetch reads it. See the [autostart](#autostart) section below.
+
+> **Tip:** If FastFetch keeps showing a stale or incorrectly tinted image after changing modes or colors, clear FastFetch's image cache:
+> ```bash
+> rm -rf ~/.cache/fastfetch/
+> ```
 
 ---
 
@@ -183,7 +188,7 @@ PhaseFetch looks for modes in two places, with your user directory taking priori
 
 | Directory | Owner | Purpose |
 |-----------|-------|---------|
-| `/usr/share/phasefetch/` | Package | Built-in modes (`ascii`, `png`, `png_256`, …) |
+| `/usr/share/phasefetch/` | Package | Built-in modes (`ascii`, `realistic`, `minecraft`, `minimal`) |
 | `~/.local/share/phasefetch/` | You | Your custom or override modes |
 
 To create a new mode, make a folder named after your mode and add one file per lunar phase, named exactly:
@@ -202,8 +207,8 @@ To create a new mode, make a folder named after your mode and add one file per l
 ```
 
 Each file can be either:
-- A **plain text / ANSI art** file — PhaseFetch will apply your `--color` tint and write it as `.ans`
-- A **PNG image** — PhaseFetch will detect it automatically and copy it as `.png`
+- A **plain text / ANSI art** file — PhaseFetch will apply your `--color` tint (if set) and write it as `.ans`
+- A **PNG image** — PhaseFetch will detect it automatically. If `--color` is set and ImageMagick is available, the image will be tinted to that color; otherwise it is copied as-is.
 
 Once the folder exists, use it immediately with `--mode your_mode_name`. If PhaseFetch is already running, it will pick up the new mode on its next update cycle without needing a restart.
 

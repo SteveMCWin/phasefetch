@@ -1,2 +1,3 @@
 research
-*.tar.gz
+**.tar.gz
+**.svg

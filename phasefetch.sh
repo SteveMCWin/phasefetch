@@ -6,8 +6,8 @@ set -e
 ####### GLOBAL VARS #######
 ###########################
 
-# Ascii art color
-color="#FFFACD"
+# Ascii art color / PNG tint color
+color=""
 # How often to run the calculation for current moon phase
 update_frequency_hours=8
 # Run once to just update the current_phase with desired art
@@ -81,10 +81,10 @@ while [ $# -gt 0 ]; do
             echo "Usage: $(basename "$0") [OPTIONS]"
             echo ""
             echo "Options:"
-            echo "  -c, --color <hex>               Hex color for moon display (default: #FFFACD) Note: you have to put the color in quotes"
+            echo "  -c, --color <hex>               Hex color to tint the moon. For ASCII art, applies color via escape sequences. For PNG modes, tints the image with ImageMagick (requires 'magick' or 'convert'). No tint applied by default. Note: put the '#' hex color in quotes"
             echo "  -u, --update-frequency <hours>  How often to refresh the moon phase, in hours (default: 8)"
             echo "  -o, --output-dir                The directory in which the current moon phase art file will be stored (default: $XDG_RUNTIME_DIR/phasefetch)"
-            echo "  -m, --mode <mode>               Display mode. Valid values: 'ascii', 'png', 'png_256' (default: ascii)"
+            echo "  -m, --mode <mode>               Display mode. Valid values: 'ascii', 'realistic', 'minecraft', 'minimal' (default: ascii)"
             echo "  -f, --file <file>               Which art file to display for current mode. Overwrites the phase calculation. Valid options are: ${phase_file_names[*]}"
             echo "      --once                      Run the script once to update the output art. Use this if you don't want to Ctrl+C after running the script manually"
             echo "  -h, --help                      Show this help message"
@@ -170,11 +170,22 @@ write_phase() {
     fi
 
     if file "$file" | grep -q "PNG"; then
-        local out="$output_dir/${mode}_${name}.png"
-        cp "$file" "$out"
+        local color_suffix="${color//#/}"
+        local out="$output_dir/${mode}_${name}${color_suffix:+_$color_suffix}.png"
+        if command -v magick &>/dev/null && [ "$color" != "" ]; then
+            magick "$file" -fill "$color" -tint 100 "$out"
+        elif command -v convert &>/dev/null && [ "$color" != "" ]; then
+            convert "$file" -fill "$color" -tint 100 "$out"
+        else
+            cp "$file" "$out"
+        fi
     else
         local out="$output_dir/${mode}_${name}.ans"
-        print_colored "$color" "$file" > "$out"
+        if [ -n "$color" ]; then
+            print_colored "$color" "$file" > "$out"
+        else
+            cat "$file" > "$out"
+        fi
     fi
 
     # Note that the file $out actually has an extension
