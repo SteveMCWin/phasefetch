@@ -45,6 +45,15 @@ fi
 info "Installing mode data to $INSTALL_DATA..."
 sudo mkdir -p "$INSTALL_DATA"
 
+if [ -d "$INSTALL_DATA" ] && [ -n "$(ls -A "$INSTALL_DATA")" ]; then
+    read -rp "Clean $INSTALL_DATA before installing? This removes modes no longer present in this version. [y/N] " clean_data
+    if [[ "$clean_data" =~ ^[Yy]$ ]]; then
+        sudo rm -rf "$INSTALL_DATA"
+        sudo mkdir -p "$INSTALL_DATA"
+        info "Cleared $INSTALL_DATA."
+    fi
+fi
+
 for mode_dir in "$SCRIPT_DIR"/*/; do
     mode_name="$(basename "$mode_dir")"
     # Skip non-mode directories
