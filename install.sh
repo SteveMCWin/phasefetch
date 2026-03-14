@@ -23,6 +23,10 @@ for cmd in bash awk file date sleep ln cp mkdir; do
     command -v "$cmd" &>/dev/null || error "Missing required dependency: $cmd"
 done
 
+if ! command -v magick &>/dev/null && ! command -v convert &>/dev/null; then
+    warn "imagemagick not found — PNG tinting (--color with PNG modes) will be disabled."
+fi
+
 if ! command -v fastfetch &>/dev/null; then
     warn "fastfetch not found — PhaseFetch will still work, but you won't be able to display the moon phase in your terminal fetch without it."
     warn "Install it from: https://github.com/fastfetch-cli/fastfetch"

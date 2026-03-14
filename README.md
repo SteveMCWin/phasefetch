@@ -43,9 +43,10 @@ PhaseFetch is a lightweight, extensible bash script that calculates the current 
 | `awk` | Moon phase calculation |
 | `file` | Detecting PNG vs ASCII art files |
 | `coreutils` | `date`, `sleep`, `ln`, `cp`, `mkdir` |
+| `imagemagick` | *(optional)* Adds tint to pngs |
 | `fastfetch` | *(optional)* Displaying the output |
 
-All of these are standard on any Linux system except FastFetch, which is optional.
+All of these are standard on any Linux system except ImageMagick and FastFetch, which are optional.
 
 ---
 

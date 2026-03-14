@@ -90,6 +90,11 @@ while [ $# -gt 0 ]; do
             echo "  -h, --help                      Show this help message"
             exit 0
         ;;
+        *)
+            echo "Error: unrecognized option '$1'" >&2
+            echo "Run '$(basename "$0") --help' for usage." >&2
+            exit 1
+        ;;
     esac
     shift
 done
