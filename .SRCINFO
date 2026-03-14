@@ -1,6 +1,6 @@
 pkgbase = phasefetch
 	pkgdesc = Calculates the current moon phase and writes corresponding art to a file, designed for use with FastFetch
-	pkgver = 0.9.4
+	pkgver = 1.0.0
 	pkgrel = 1
 	url = https://github.com/SteveMCWin/phasefetch
 	arch = any
@@ -10,7 +10,7 @@ pkgbase = phasefetch
 	depends = file
 	depends = coreutils
 	optdepends = fastfetch: display moon phase in terminal fetch
-	source = phasefetch-0.9.4.tar.gz::https://github.com/SteveMCWin/phasefetch/archive/refs/tags/v0.9.4.tar.gz
-	sha256sums = fa8fd8e39b7f4c71d034b7c87be03e0cf23f8fc22662d063477997b92e22fbe3
+	source = phasefetch-1.0.0.tar.gz::https://github.com/SteveMCWin/phasefetch/archive/refs/tags/v1.0.0.tar.gz
+	sha256sums = 8cb79f750c8c97fd87b247546b981df73b4954a6eea687a837125ae8f2329b5a
 
 pkgname = phasefetch
